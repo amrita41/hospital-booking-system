@@ -1,51 +1,44 @@
 package com.hospital.endpoints.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.hospital.endpoints.entity.Department;
 import com.hospital.endpoints.entity.Doctor;
+import com.hospital.endpoints.entity.DoctorResponse;
 import com.hospital.endpoints.repository.DepartmentDao;
 import com.hospital.endpoints.repository.DoctorDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.print.Doc;
+import java.util.List;
 
 @RestController
 public class DoctorController {
 	
 	@Autowired
 	private DoctorDao doctorDao;
+
 	
-	private DepartmentDao departmentDao;
-	
-	@GetMapping("/doctors")
-	List<Doctor> getDoctors()
+	@GetMapping("/doctor")
+	List<DoctorResponse> getDoctors()
 	{
-		return doctorDao.findAll();
+		return doctorDao.getAllDoctors();
 	}
-	
-	@PostMapping("/doctors")
-	Doctor postDoctor(@RequestBody Doctor doctor)
+
+	@GetMapping("/doctor/{deptId}")
+	List<Doctor> getDoctorsByDepartment(@PathVariable Integer deptId)
 	{
-		doctorDao.save(doctor);
-		return doctor;
+		return doctorDao.getDoctorsByDepartment(deptId);
 	}
-	
-	@PutMapping("/doctors/{doctId}/departments/{deptId}")
-	void assignDepartmentToDoctor(
-			@PathVariable String doctId,
-			@PathVariable String deptId
-    )
+	@PostMapping("/doctor")
+	Doctor addDoctor(@RequestBody Doctor doctor)
 	{
-		Doctor doct  = doctorDao.getById(Integer.parseInt(doctId));
-		Department dept = departmentDao.getById(Integer.parseInt(deptId));
-		doct.assignDepartment(dept);
-		//return doctorDao.save(doct);
-		
+		return doctorDao.save(doctor);
 	}
+	@PutMapping ("/doctor/{id}")
+	Doctor updateDoctor(@PathVariable Integer id, @RequestBody Doctor doctor)
+	{
+		Doctor oldDoctor = doctorDao.getById(id);
+		oldDoctor.setDeptId(doctor.getDeptId());
+		return doctorDao.save(oldDoctor);
+	}
+
 }

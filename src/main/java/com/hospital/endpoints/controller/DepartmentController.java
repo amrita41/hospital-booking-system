@@ -3,12 +3,8 @@ package com.hospital.endpoints.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.hospital.endpoints.entity.Department;
 import com.hospital.endpoints.entity.Doctor;
@@ -28,12 +24,23 @@ public class DepartmentController {
 		return departmentDao.findAll();
 	}
 	
-	@PostMapping("/departments")
+	@PostMapping("/department")
 	Department postDepartment(@RequestBody Department department)
 	{
 		departmentDao.save(department);
 		return department;
 	}
-	
-
+	@PutMapping("/department/{id}")
+	Department updateDepartment(@PathVariable Integer id, @RequestBody Department department)
+	{
+		Department oldDepartment = departmentDao.getById(id);
+		oldDepartment.setDeptName(department.getDeptName());
+		return departmentDao.save(oldDepartment);
+	}
+	@DeleteMapping("/department/{id}")
+	ResponseEntity deleteDepartment(@PathVariable Integer id)
+	{
+		departmentDao.deleteById(id);
+		return ResponseEntity.ok().build();
+	}
 }
