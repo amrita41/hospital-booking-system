@@ -1,19 +1,26 @@
 package com.hospital.endpoints.entity;
 
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
-public class Department {
+public class Department implements Serializable {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,22 +28,22 @@ public class Department {
 	private String deptName;
 	
 	
-	//@JsonIgnore
-	@OneToMany(mappedBy = "department")
-	private Set<Doctor> doctors = new HashSet<>();
 	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "department")
+	private List<Doctor> doctors = new ArrayList<>();
+
+	
+	public List<Doctor> getDoctors() {
+		return doctors;
+	}
+	public void setDoctors(List<Doctor> doctors) {
+		this.doctors = doctors;
+	}
 	public Department(Integer deptId, String deptName) {
 		super();
 		this.deptId = deptId;
 		this.deptName = deptName;
-	}
-	
-	
-	public Set<Doctor> getDoctors() {
-		return doctors;
-	}
-	public void setDoctors(Set<Doctor> doctors) {
-		this.doctors = doctors;
+		
 	}
 	public Department() {
 		super();
